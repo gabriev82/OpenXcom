@@ -36,6 +36,7 @@ en-US:
 #CraftInfoState.cpp
   STR_PILOTS: "PILOTS"
   STR_SHIELD: "SHIELD>{ALT}{0}"
+  STR_CRAFT_SKIN_ID: "[{0}]"
 #CraftPilotSelectState.cpp
   STR_SELECT_PILOT: "Select Pilot"
 #CraftPilotsState.cpp
@@ -138,6 +139,11 @@ en-US:
   STR_F_FLAG: " [f]"
   STR_I_FLAG: " [i]"
 #TechTreeViewerState.cpp
+  STR_THIS_FEATURE_IS_DISABLED_1: "This feature is disabled."
+  STR_THIS_FEATURE_IS_DISABLED_2: "This feature is disabled."
+  STR_THIS_FEATURE_IS_DISABLED_3: "This feature is disabled."
+  STR_THIS_FEATURE_IS_DISABLED_4: "This feature is disabled."
+  STR_THIS_FEATURE_IS_DISABLED_5: "This feature is disabled."
   STR_TECH_TREE_VIEWER: "Tech Tree Viewer"
   STR_SELECT_TOPIC: "Select Topic"
   STR_RESEARCH_PROGRESS: "Progress>{ALT} {0}%"
@@ -165,6 +171,8 @@ en-US:
   STR_RESEARCH_REQUIRED_USE: "Research required (use):"
   STR_RESEARCH_REQUIRED_BUY: "Research required (buy):"
   STR_SERVICES_REQUIRED_BUY: "Services required (buy):"
+  STR_PRODUCED_BY: "Produced by:"
+  STR_SPAWNED_BY: "Spawned by:"
   STR_MATERIALS_REQUIRED: "Materials required:"
   STR_ITEMS_PRODUCED: "Items produced:"
   STR_PERSON_RECRUITED: "Person recruited:"
@@ -216,6 +224,8 @@ en-US:
   STR_SELL: "SELL"
   STR_LIVE_ALIENS_SURRENDERED: "ENEMIES SURRENDERED"
   STR_MISSION_ABORTED: "MISSION ABORTED"
+  STR_VIPS_SAVED: "VIPS SAVED"
+  STR_VIPS_LOST: "VIPS LOST"
   STR_BOUNTY: "BOUNTY"
   STR_MANA_ABBREVIATION: "MAN"
 #Inventory.cpp
@@ -234,6 +244,8 @@ en-US:
   STR_LOAD_PERSONAL_EQUIPMENT: "Load Personal Equipment"
   STR_PERSONAL_EQUIPMENT_SAVED: "Personal equipment saved."
 #NextTurnState.cpp
+  STR_TELL_ME_MORE: "Tell me more..."
+  STR_REINFORCEMENTS_ALERT: "Reinforcements alert!"
   STR_HIT_LOG_NEW_TURN: "New Turn"
 #ProjectileFlyBState.cpp
   STR_FAILED_CQB_CHECK: "Enemy managed to interrupt your attack!"
@@ -305,6 +317,7 @@ en-US:
   STR_NO_QUEUED: "+"
   STR_NO_DONE: "DONE"
 #BaseDefenseState.cpp
+  STR_NO_AMMO: "NO AMMO!"
   STR_START_FIRING: "Fire!"
   STR_SKIP_FIRING: "Let them in..."
 #BaseDestroyedState.cpp
@@ -376,6 +389,9 @@ en-US:
 #MainMenuState.cpp
   STR_UPDATE: "Update"
   STR_LATEST_VERSION_INFO: "You are using the latest OpenXcom version."
+#NotesState.cpp
+  STR_NOTES: "Notes"
+  STR_NEW_NOTE: "<NEW NOTE>"
 #OptionsAdvancedState.cpp
   STR_OXCE: "Extended"
 #OptionsBaseState.cpp

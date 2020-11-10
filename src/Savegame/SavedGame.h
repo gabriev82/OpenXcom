@@ -130,6 +130,7 @@ private:
 	GameEnding _end;
 	bool _ironman;
 	GameTime *_time;
+	std::vector<std::string> _userNotes;
 	std::vector<int> _researchScores;
 	std::vector<int64_t> _funds, _maintenance, _incomes, _expenditures;
 	double _globeLon, _globeLat;
@@ -268,6 +269,8 @@ public:
 	void setResearchRuleStatus(const std::string &researchRule, int newStatus);
 	/// Sets the item as hidden or unhidden
 	void setHiddenPurchaseItemsStatus(const std::string &itemName, bool hidden);
+	/// Selects a "getOneFree" topic for the given research rule.
+	const RuleResearch* selectGetOneFree(const RuleResearch* research);
 	/// Remove a research from the "already discovered" list
 	void removeDiscoveredResearch(const RuleResearch *research);
 	/// Add a finished ResearchProject
@@ -406,8 +409,6 @@ public:
 	void setLastSelectedArmor(const std::string &value);
 	/// Gets the last selected armor
 	std::string getLastSelectedArmor() const;
-	/// Returns the craft corresponding to the specified unique id.
-	Craft *findCraftByUniqueId(const CraftId& craftId) const;
 	/// Gets the name of a global equipment layout at specified index.
 	const std::string &getGlobalEquipmentLayoutName(int index) const;
 	/// Sets the name of a global equipment layout at specified index.
@@ -456,6 +457,8 @@ public:
 	int getCurrentScore(int monthsPassed) const;
 	/// Clear links for the given alien base. Use this before deleting the alien base.
 	void clearLinksForAlienBase(AlienBase* alienBase, const Mod* mod);
+	/// Gets the list of user notes.
+	std::vector<std::string>& getUserNotes() { return _userNotes; }
 };
 
 }

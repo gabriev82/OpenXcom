@@ -302,6 +302,8 @@ public:
 	void stopScrolling(Action *action);
 	/// Autosave next turn.
 	void autosave();
+	/// Is busy?
+	bool isBusy() const;
 	/// Don't do anything and consume the event.
 	void consumeEvent(Action *action);
 };

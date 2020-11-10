@@ -2639,7 +2639,11 @@ inline void BattlescapeState::handle(Action *action)
 				{
 					if (_save->getSide() == FACTION_PLAYER)
 					{
-						if (altPressed)
+						if (Options::oxceDisableHitLog)
+						{
+							_game->pushState(new InfoboxState(tr("STR_THIS_FEATURE_IS_DISABLED_4")));
+						}
+						else if (altPressed)
 						{
 							// turn diary
 							_game->pushState(new TurnDiaryState(_save->getHitLog()));
@@ -3248,6 +3252,9 @@ void BattlescapeState::finishBattle(bool abort, int inExitArea)
 		}
 	}
 
+	// let's count all the VIPs before we remove them :)
+	_battleGame->tallyVIPs(_save->getVIPEscapeType());
+	// this removes player-controlled VIPs (not civilian VIPs)
 	_battleGame->removeSummonedPlayerUnits();
 
 	AlienDeployment *ruleDeploy = _game->getMod()->getDeployment(_save->getMissionType());
@@ -3830,6 +3837,14 @@ void BattlescapeState::stopScrolling(Action *action)
 void BattlescapeState::autosave()
 {
 	_autosave = true;
+}
+
+/**
+ * Is busy?
+ */
+bool BattlescapeState::isBusy() const
+{
+	return (_map->getCursorType() == CT_NONE || _battleGame->isBusy());
 }
 
 void BattlescapeState::consumeEvent(Action *action)

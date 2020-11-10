@@ -39,6 +39,7 @@
 #include "CrossPlatform.h"
 #include "FileMap.h"
 #include "Unicode.h"
+#include "../Menu/NotesState.h"
 #include "../Menu/TestState.h"
 #include <algorithm>
 #include "../fallthrough.h"
@@ -516,6 +517,24 @@ void Game::run()
 							Options::captureMouse = !Options::captureMouse;
 							SDL_bool captureMouse = Options::captureMouse ? SDL_TRUE : SDL_FALSE;
 							SDL_SetWindowGrab(_screen->getWindow(), captureMouse);
+						}
+						// "ctrl-n" notes UI
+						else if (action.getDetails()->key.keysym.sym == SDLK_n && (SDL_GetModState() & KMOD_CTRL) != 0)
+						{
+							if (_save)
+							{
+								if (_save->getSavedBattle())
+								{
+									if (!_save->getSavedBattle()->isBattlescapeStateBusy())
+									{
+										pushState(new NotesState(OPT_BATTLESCAPE));
+									}
+								}
+								else
+								{
+									pushState(new NotesState(OPT_GEOSCAPE));
+								}
+							}
 						}
 						else if (Options::debug)
 						{
