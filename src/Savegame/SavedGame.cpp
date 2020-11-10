@@ -425,6 +425,7 @@ void SavedGame::load(const std::string &filename, Mod *mod, Language *lang)
 	_graphFinanceToggles = doc["graphFinanceToggles"].as<std::string>(_graphFinanceToggles);
 	_funds = doc["funds"].as< std::vector<int64_t> >(_funds);
 	_maintenance = doc["maintenance"].as< std::vector<int64_t> >(_maintenance);
+	_userNotes = doc["userNotes"].as< std::vector<std::string> >(_userNotes);
 	_researchScores = doc["researchScores"].as< std::vector<int> >(_researchScores);
 	_incomes = doc["incomes"].as< std::vector<int64_t> >(_incomes);
 	_expenditures = doc["expenditures"].as< std::vector<int64_t> >(_expenditures);
@@ -828,6 +829,7 @@ void SavedGame::save(const std::string &filename, Mod *mod) const
 	node["rng"] = RNG::getSeed();
 	node["funds"] = _funds;
 	node["maintenance"] = _maintenance;
+	node["userNotes"] = _userNotes;
 	node["researchScores"] = _researchScores;
 	node["incomes"] = _incomes;
 	node["expenditures"] = _expenditures;
@@ -1411,6 +1413,58 @@ void SavedGame::setHiddenPurchaseItemsStatus(const std::string &itemName, bool h
 const std::map<std::string, bool> &SavedGame::getHiddenPurchaseItems()
 {
 	return _hiddenPurchaseItemsMap;
+}
+
+/*
+ * Selects a "getOneFree" topic for the given research rule.
+ * @param research Pointer to the given research rule.
+ * @return Pointer to the selected getOneFree topic. Nullptr, if nothing was selected.
+ */
+const RuleResearch* SavedGame::selectGetOneFree(const RuleResearch* research)
+{
+	if (!research->getGetOneFree().empty() || !research->getGetOneFreeProtected().empty())
+	{
+		std::vector<const RuleResearch*> possibilities;
+		for (auto& free : research->getGetOneFree())
+		{
+			if (isResearchRuleStatusDisabled(free->getName()))
+			{
+				continue; // skip disabled topics
+			}
+			if (!isResearched(free, false))
+			{
+				possibilities.push_back(free);
+			}
+		}
+		for (auto& itMap : research->getGetOneFreeProtected())
+		{
+			if (isResearched(itMap.first, false))
+			{
+				for (auto& itVector : itMap.second)
+				{
+					if (isResearchRuleStatusDisabled(itVector->getName()))
+					{
+						continue; // skip disabled topics
+					}
+					if (!isResearched(itVector, false))
+					{
+						possibilities.push_back(itVector);
+					}
+				}
+			}
+		}
+		if (!possibilities.empty())
+		{
+			size_t pick = 0;
+			if (!research->sequentialGetOneFree())
+			{
+				pick = RNG::generate(0, possibilities.size() - 1);
+			}
+			auto ret = possibilities.at(pick);
+			return ret;
+		}
+	}
+	return nullptr;
 }
 
 /*
@@ -2683,25 +2737,6 @@ void SavedGame::setLastSelectedArmor(const std::string &value)
 std::string SavedGame::getLastSelectedArmor() const
 {
 	return _lastselectedArmor;
-}
-
-/**
- * Returns the craft corresponding to the specified unique id.
- * @param craftId The unique craft id to look up.
- * @return The craft with the specified id, or NULL.
- */
-Craft *SavedGame::findCraftByUniqueId(const CraftId& craftId) const
-{
-	for (std::vector<Base*>::const_iterator base = _bases.begin(); base != _bases.end(); ++base)
-	{
-		for (std::vector<Craft*>::const_iterator craft = (*base)->getCrafts()->begin(); craft != (*base)->getCrafts()->end(); ++craft)
-		{
-			if ((*craft)->getUniqueId() == craftId)
-				return *craft;
-		}
-	}
-
-	return NULL;
 }
 
 /**
