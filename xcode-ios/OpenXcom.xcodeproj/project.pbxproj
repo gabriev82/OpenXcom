@@ -11,6 +11,7 @@
 		5B0DC8AF22F300E70092A513 /* RuleEnviroEffects.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B0DC8AE22F300E70092A513 /* RuleEnviroEffects.cpp */; };
 		5B0DC8B222F300FA0092A513 /* RuleArcScript.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B0DC8B022F300FA0092A513 /* RuleArcScript.cpp */; };
 		5B189CEC241CBF2C00E11BE9 /* RuleManufactureShortcut.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CEB241CBF2C00E11BE9 /* RuleManufactureShortcut.cpp */; };
+		5B32845D255B1B14002C2AC1 /* NotesState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B328451255B1B13002C2AC1 /* NotesState.cpp */; };
 		5B498CD325404F5D00D97DF7 /* SoldierTransformationListState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B498CC725404F5C00D97DF7 /* SoldierTransformationListState.cpp */; };
 		5B5F680D2391B9A100D2D740 /* OptionsFoldersState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B5F68012391B9A000D2D740 /* OptionsFoldersState.cpp */; };
 		5B76D7A8241000F800F6D311 /* SkillMenuState.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 5B76D7A7241000F800F6D311 /* SkillMenuState.cpp */; };
@@ -511,6 +512,8 @@
 		5B0DC8B122F300FA0092A513 /* RuleArcScript.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleArcScript.h; sourceTree = "<group>"; };
 		5B189CE0241CBF2C00E11BE9 /* RuleManufactureShortcut.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RuleManufactureShortcut.h; sourceTree = "<group>"; };
 		5B189CEB241CBF2C00E11BE9 /* RuleManufactureShortcut.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = RuleManufactureShortcut.cpp; sourceTree = "<group>"; };
+		5B328451255B1B13002C2AC1 /* NotesState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = NotesState.cpp; sourceTree = "<group>"; };
+		5B32845C255B1B13002C2AC1 /* NotesState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NotesState.h; sourceTree = "<group>"; };
 		5B498CC725404F5C00D97DF7 /* SoldierTransformationListState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SoldierTransformationListState.cpp; sourceTree = "<group>"; };
 		5B498CD225404F5C00D97DF7 /* SoldierTransformationListState.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoldierTransformationListState.h; sourceTree = "<group>"; };
 		5B5F68012391B9A000D2D740 /* OptionsFoldersState.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = OptionsFoldersState.cpp; sourceTree = "<group>"; };
@@ -1431,6 +1434,8 @@
 		B28341D9201F6D9B00BAEC9D /* Menu */ = {
 			isa = PBXGroup;
 			children = (
+				5B328451255B1B13002C2AC1 /* NotesState.cpp */,
+				5B32845C255B1B13002C2AC1 /* NotesState.h */,
 				5B5F68012391B9A000D2D740 /* OptionsFoldersState.cpp */,
 				5B5F680C2391B9A000D2D740 /* OptionsFoldersState.h */,
 				5BD0BB202242E099008E6DFB /* OptionsInformExtendedState.cpp */,
@@ -2773,6 +2778,7 @@
 				B28344A4201F6D9D00BAEC9D /* AlienBaseState.cpp in Sources */,
 				5BD0BB1C2242E079008E6DFB /* AllocateTrainingState.cpp in Sources */,
 				B2834493201F6D9D00BAEC9D /* PsiTrainingState.cpp in Sources */,
+				5B32845D255B1B14002C2AC1 /* NotesState.cpp in Sources */,
 				B28344D8201F6D9E00BAEC9D /* BattleUnit.cpp in Sources */,
 				5BD0BB162242E079008E6DFB /* NewPossiblePurchaseState.cpp in Sources */,
 				B28344E1201F6D9E00BAEC9D /* SaveConverter.cpp in Sources */,
