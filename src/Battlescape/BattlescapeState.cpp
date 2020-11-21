@@ -2117,7 +2117,11 @@ void BattlescapeState::updateSoldierInfo(bool checkFOV)
 					ss.str("");
 					ss << look;
 					ss << ".SPK";
-					surf = _game->getMod()->getSurface(ss.str(), true);
+					surf = _game->getMod()->getSurface(ss.str(), false);
+				}
+				if (!surf)
+				{
+					surf = _game->getMod()->getSurface(look, true);
 				}
 
 				// crop
@@ -3252,8 +3256,8 @@ void BattlescapeState::finishBattle(bool abort, int inExitArea)
 		}
 	}
 
-	// let's count all the VIPs before we remove them :)
-	_battleGame->tallyVIPs(_save->getVIPEscapeType());
+	// let's count summoned player-controlled VIPs before we remove them :)
+	_battleGame->tallySummonedVIPs();
 	// this removes player-controlled VIPs (not civilian VIPs)
 	_battleGame->removeSummonedPlayerUnits();
 
@@ -3696,6 +3700,11 @@ void BattlescapeState::txtTooltipInEndTurn(Action *action)
 		ss << tr(_currentTooltip);
 		ss << " ";
 		ss << _save->getTurn();
+		if (_save->getTurnLimit() > 0)
+		{
+			ss << "/" << _save->getTurnLimit();
+		}
+
 		_txtTooltip->setText(ss.str().c_str());
 	}
 }

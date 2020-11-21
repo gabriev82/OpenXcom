@@ -26,6 +26,7 @@
 #include "AIModule.h"
 #include "Map.h"
 #include "Camera.h"
+#include "Projectile.h"
 #include "../Savegame/SavedGame.h"
 #include "../Savegame/SavedBattleGame.h"
 #include "ExplosionBState.h"
@@ -3655,9 +3656,14 @@ int TileEngine::calculateParabolaVoxel(Position origin, Position target, bool st
 	int z = origin.z;
 	int i = 8;
 	int result = V_EMPTY;
-	std::vector<Position> _trajectory;
 	Position lastPosition = Position(x,y,z);
 	Position nextPosition = lastPosition;
+
+	if (storeTrajectory && trajectory)
+	{
+		//initla value for small hack to glue `calculateLineVoxel` into one continuous arc
+		trajectory->push_back(lastPosition);
+	}
 	while (z > 0)
 	{
 		x = (int)((double)origin.x + (double)i * cos(te) * sin(fi));
@@ -3665,24 +3671,23 @@ int TileEngine::calculateParabolaVoxel(Position origin, Position target, bool st
 		z = (int)((double)origin.z + (double)i * cos(fi) - zK * ((double)i - ro / 2.0) * ((double)i - ro / 2.0) + zA);
 		//passes through this point?
 		nextPosition = Position(x,y,z);
-		_trajectory.clear();
-		result = calculateLineVoxel(lastPosition, nextPosition, false, nullptr, excludeUnit);
-		if (result != V_EMPTY)
-		{
-			result = calculateLineVoxel(lastPosition, nextPosition, true, &_trajectory, excludeUnit);
-			nextPosition = _trajectory.back(); //pick the INSIDE position of impact
-			break;
-		}
+
 		if (storeTrajectory && trajectory)
 		{
-			trajectory->push_back(nextPosition);
+			//remove end point of previus trajectory part, becasue next one will add this point again
+			trajectory->pop_back();
+		}
+		result = calculateLineVoxel(lastPosition, nextPosition, storeTrajectory, storeTrajectory ? trajectory : nullptr, excludeUnit);
+		if (result != V_EMPTY)
+		{
+			if (!storeTrajectory && trajectory)
+			{
+				result = calculateLineVoxel(lastPosition, nextPosition, false, trajectory, excludeUnit); //pick the INSIDE position of impact
+			}
+			break;
 		}
 		lastPosition = nextPosition;
 		++i;
-	}
-	if (trajectory != 0)
-	{ // store the position of impact
-		trajectory->push_back(nextPosition);
 	}
 	return result;
 }
@@ -4257,26 +4262,6 @@ Tile *TileEngine::applyGravity(Tile *t)
 		occupant->updateTileFloorState(_save);
 		if (occupant->haveNoFloorBelow())
 		{
-			// we already know that we can fall, skip first check because `updateTileFloorState` did it already
-			Position unitpos = occupant->getPosition() - Position(0, 0, 1);
-			while (unitpos.z > 0)
-			{
-				bool canFall = true;
-				for (int y = 0; y < occupant->getArmor()->getSize() && canFall; ++y)
-				{
-					for (int x = 0; x < occupant->getArmor()->getSize() && canFall; ++x)
-					{
-						auto rt = _save->getTile(Position(unitpos.x+x, unitpos.y+y, unitpos.z));
-						if (!rt->hasNoFloor(_save))
-						{
-							canFall = false;
-						}
-					}
-				}
-				if (!canFall)
-					break;
-				unitpos.z--;
-			}
 			if (!occupant->isOutThresholdExceed())
 			{
 				if (occupant->getMovementType() == MT_FLY)
@@ -4756,13 +4741,19 @@ bool TileEngine::validateThrow(BattleAction &action, Position originVoxel, Posit
 		return false;
 	}
 
+	std::vector<Position> trajectory;
+	// thows should be around 10 tiles far, make one allocation that fit 99% cases with some margin
+	trajectory.resize(16*20);
 	// we try 8 different curvatures to try and reach our goal.
 	int test = V_OUTOFBOUNDS;
 	while (!foundCurve && curvature < 5.0)
 	{
-		std::vector<Position> trajectory;
-		test = calculateParabolaVoxel(originVoxel, targetVoxel, false, &trajectory, action.actor, curvature, Position(0,0,0));
-		Position tilePos = ((trajectory.at(0) + Position(0,0,1)).toTile());
+		trajectory.clear();
+		test = calculateParabolaVoxel(originVoxel, targetVoxel, true, &trajectory, action.actor, curvature, Position(0,0,0));
+		//position that item hit
+		Position hitPos = (trajectory.back() + Position(0,0,1)).toTile();
+		//position where item will land
+		Position tilePos = Projectile::getPositionFromEnd(trajectory, Projectile::ItemDropVoxelOffset).toTile();
 		if (forced || (test != V_OUTOFBOUNDS && tilePos == targetPos))
 		{
 			if (voxelType)
@@ -4776,7 +4767,7 @@ bool TileEngine::validateThrow(BattleAction &action, Position originVoxel, Posit
 			curvature += 0.5;
 			if (test != V_OUTOFBOUNDS && action.actor->getFaction() == FACTION_PLAYER) //obstacle indicator is only for player
 			{
-				Tile* hitTile = _save->getTile(tilePos);
+				Tile* hitTile = _save->getTile(hitPos);
 				if (hitTile)
 				{
 					hitTile->setObstacle(test);
