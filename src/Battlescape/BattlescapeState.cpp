@@ -1726,7 +1726,10 @@ void BattlescapeState::btnAndroidNightVisionClick(Action *action)
 		_map->toggleNightVision();
 	}
 
-	action->getDetails()->type = SDL_NOEVENT; // consume the event
+	action->getDetails()->type = SDL_FIRSTEVENT; // consume the event
+#ifdef __MOBILE__
+	_longPressTimer->stop();
+#endif
 }
 
 /**
