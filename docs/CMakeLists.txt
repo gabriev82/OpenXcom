@@ -36,4 +36,4 @@ else ()
   message ( WARNING "Doxygen not found. API documentation generation disabled." )
 endif ()
 
-INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/openxcom.6 DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man6)
+#INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/openxcom.6 DESTINATION ${CMAKE_INSTALL_PREFIX}/man/man6)
