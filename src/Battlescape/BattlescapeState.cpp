@@ -3862,8 +3862,8 @@ void BattlescapeState::stopScrolling(Action *action)
 	{
 		/* FIXME: Mouse warping still doesn't work as intended */
 		SDL_WarpMouseInWindow(NULL, _cursorPosition.x, _cursorPosition.y);
-		action->setMouseAction(_cursorPosition.x/action->getXScale(), _cursorPosition.y/action->getYScale(), 0, 0);
-		_map->setSelectorPosition(_cursorPosition.x / action->getXScale(), _cursorPosition.y / action->getYScale());
+		action->setMouseAction(_cursorPosition.x, _cursorPosition.y, _map->getX(), _map->getY());
+		_map->setSelectorPosition(action->getAbsoluteXMouse(), action->getAbsoluteYMouse());
 	}
 #endif
 	// reset our "mouse position stored" flag

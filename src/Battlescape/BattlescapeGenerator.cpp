@@ -324,6 +324,12 @@ void BattlescapeGenerator::nextStage()
 	std::vector<BattleItem*> *takeHomeConditional = _save->getConditionalRecoveredItems();
 	std::vector<BattleItem*> takeToNextStage, carryToNextStage, removeFromGame;
 
+	bool autowin = false;
+	if (_save->getChronoTrigger() >= FORCE_WIN && _save->getTurn() > _save->getTurnLimit())
+	{
+		autowin = true;
+	}
+
 	_save->resetTurnCounter();
 
 	for (std::vector<BattleItem*>::iterator i = _save->getItems()->begin(); i != _save->getItems()->end(); ++i)
@@ -339,7 +345,7 @@ void BattlescapeGenerator::nextStage()
 				if ((*i)->getFuseTimer() == -1)
 				{
 					// protocol 1: all defenders dead, recover all items.
-					if (aliensAlive == 0)
+					if (aliensAlive == 0 || autowin)
 					{
 						// any corpses or unconscious units get put in the skyranger, as well as any unresearched items
 						if (((*i)->getUnit() &&
@@ -1098,6 +1104,12 @@ void BattlescapeGenerator::autoEquip(std::vector<BattleUnit*> units, Mod *mod, s
 	{
 		for (std::vector<BattleItem*>::iterator j = craftInv->begin(); j != craftInv->end();)
 		{
+			if ((*j)->getRules()->getInventoryHeight() == 0 || (*j)->getRules()->getInventoryWidth() == 0)
+			{
+				// don't autoequip hidden items, whatever they are
+				++j;
+				continue;
+			}
 			if ((*j)->getSlot() == groundRuleInv)
 			{
 				bool add = false;
