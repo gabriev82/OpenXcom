@@ -454,7 +454,7 @@ void MiniMapView::stopScrolling(Action *action)
 	{
 		SDL_WarpMouseInWindow(NULL, _cursorPosition.x, _cursorPosition.y);
 #ifndef __MOBILE__
-		action->setMouseAction(_cursorPosition.x/action->getXScale(), _cursorPosition.y/action->getYScale(), 0, 0);
+		action->setMouseAction(_cursorPosition.x, _cursorPosition.y, getX(), getY());
 #else
 		action->setMouseAction(_xBeforeMouseScrolling, _yBeforeMouseScrolling, 0, 0);
 #endif

@@ -180,7 +180,7 @@ void ListGamesState::init()
 
 	if (_origin == OPT_BATTLESCAPE)
 	{
-		applyBattlescapeTheme();
+		applyBattlescapeTheme("saveMenus");
 	}
 
 	try

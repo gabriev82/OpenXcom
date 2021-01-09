@@ -21,6 +21,7 @@
 #include <vector>
 #include <yaml-cpp/yaml.h>
 #include "RuleBaseFacilityFunctions.h"
+#include "ModScript.h"
 
 namespace OpenXcom
 {
@@ -44,22 +45,29 @@ class RuleResearch
  private:
 	std::string _name, _lookup, _cutscene, _spawnedItem, _spawnedEvent;
 	int _cost, _points;
-	std::vector<std::string> _dependenciesName, _unlocksName, _disablesName, _getOneFreeName, _requiresName;
+	std::vector<std::string> _dependenciesName, _unlocksName, _disablesName, _reenablesName, _getOneFreeName, _requiresName;
 	RuleBaseFacilityFunctions _requiresBaseFunc;
-	std::vector<const RuleResearch*> _dependencies, _unlocks, _disables, _getOneFree, _requires;
+	std::vector<const RuleResearch*> _dependencies, _unlocks, _disables, _reenables, _getOneFree, _requires;
 	bool _sequentialGetOneFree;
 	std::map<std::string, std::vector<std::string> > _getOneFreeProtectedName;
 	std::map<const RuleResearch*, std::vector<const RuleResearch*> > _getOneFreeProtected;
 	bool _needItem, _destroyItem;
 	int _listOrder;
+
+	ScriptValues<RuleResearch> _scriptValues;
 public:
+	/// Name of class used in script.
+	static constexpr const char* ScriptName = "RuleResearch";
+	/// Register all useful function used by script.
+	static void ScriptRegister(ScriptParserBase* parser);
+
 	static const int RESEARCH_STATUS_NEW = 0;
 	static const int RESEARCH_STATUS_NORMAL = 1;
 	static const int RESEARCH_STATUS_DISABLED = 2;
 	RuleResearch(const std::string &name);
 
 	/// Loads the research from YAML.
-	void load(const YAML::Node& node, Mod* mod, int listOrder);
+	void load(const YAML::Node& node, Mod* mod, const ModScript& parsers, int listOrder);
 	/// Cross link with other rules.
 	void afterLoad(const Mod* mod);
 
@@ -79,6 +87,8 @@ public:
 	const std::vector<const RuleResearch*> &getUnlocked() const;
 	/// Gets the list of ResearchProjects disabled by this research.
 	const std::vector<const RuleResearch*> &getDisabled() const;
+	/// Gets the list of ResearchProjects reenabled by this research.
+	const std::vector<const RuleResearch*> &getReenabled() const;
 	/// Gets the points earned for discovering this ResearchProject.
 	int getPoints() const;
 	/// Gets the list of ResearchProjects granted at random for free by this research.

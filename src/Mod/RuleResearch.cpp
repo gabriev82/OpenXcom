@@ -20,6 +20,7 @@
 #include "RuleResearch.h"
 #include "../Engine/Exception.h"
 #include "../Engine/Collections.h"
+#include "../Engine/ScriptBind.h"
 #include "Mod.h"
 
 namespace OpenXcom
@@ -34,11 +35,11 @@ RuleResearch::RuleResearch(const std::string &name) : _name(name), _cost(0), _po
  * @param node YAML node.
  * @param listOrder The list weight for this research.
  */
-void RuleResearch::load(const YAML::Node &node, Mod* mod, int listOrder)
+void RuleResearch::load(const YAML::Node &node, Mod* mod, const ModScript& parsers, int listOrder)
 {
 	if (const YAML::Node &parent = node["refNode"])
 	{
-		load(parent, mod, listOrder);
+		load(parent, mod, parsers, listOrder);
 	}
 	_name = node["name"].as<std::string>(_name);
 	_lookup = node["lookup"].as<std::string>(_lookup);
@@ -50,6 +51,7 @@ void RuleResearch::load(const YAML::Node &node, Mod* mod, int listOrder)
 	mod->loadUnorderedNames(_name, _dependenciesName, node["dependencies"]);
 	mod->loadUnorderedNames(_name, _unlocksName, node["unlocks"]);
 	mod->loadUnorderedNames(_name, _disablesName, node["disables"]);
+	mod->loadUnorderedNames(_name, _reenablesName, node["reenables"]);
 	mod->loadUnorderedNames(_name, _getOneFreeName, node["getOneFree"]);
 	mod->loadUnorderedNames(_name, _requiresName, node["requires"]);
 	mod->loadBaseFunction(_name, _requiresBaseFunc, node["requiresBaseFunc"]);
@@ -67,6 +69,7 @@ void RuleResearch::load(const YAML::Node &node, Mod* mod, int listOrder)
 	{
 		throw Exception("Research topic " + _name + " has requirements, but the cost is not zero. Sorry, this is not allowed!");
 	}
+	_scriptValues.load(node, parsers.getShared());
 }
 
 /**
@@ -82,6 +85,7 @@ void RuleResearch::afterLoad(const Mod* mod)
 	_dependencies = mod->getResearch(_dependenciesName);
 	_unlocks = mod->getResearch(_unlocksName);
 	_disables = mod->getResearch(_disablesName);
+	_reenables = mod->getResearch(_reenablesName);
 	_getOneFree = mod->getResearch(_getOneFreeName);
 	_requires = mod->getResearch(_requiresName);
 
@@ -103,6 +107,7 @@ void RuleResearch::afterLoad(const Mod* mod)
 	Collections::removeAll(_dependenciesName);
 	Collections::removeAll(_unlocksName);
 	Collections::removeAll(_disablesName);
+	Collections::removeAll(_reenablesName);
 	Collections::removeAll(_getOneFreeName);
 	Collections::removeAll(_requiresName);
 	Collections::removeAll(_getOneFreeProtectedName);
@@ -180,6 +185,15 @@ const std::vector<const RuleResearch*> &RuleResearch::getDisabled() const
 }
 
 /**
+ * Gets the list of ResearchProjects reenabled by this research.
+ * @return The list of ResearchProjects.
+ */
+const std::vector<const RuleResearch*> &RuleResearch::getReenabled() const
+{
+	return _reenables;
+}
+
+/**
  * Get the points earned for this ResearchProject.
  * @return The points earned for this ResearchProject.
  */
@@ -249,6 +263,47 @@ const std::string & RuleResearch::getCutscene() const
 const std::string & RuleResearch::getSpawnedItem() const
 {
 	return _spawnedItem;
+}
+
+////////////////////////////////////////////////////////////
+//					Script binding
+////////////////////////////////////////////////////////////
+
+namespace
+{
+
+	std::string debugDisplayScript(const RuleResearch* ru)
+	{
+		if (ru)
+		{
+			std::string s;
+			s += RuleResearch::ScriptName;
+			s += "(name: \"";
+			s += ru->getName();
+			s += "\")";
+			return s;
+		}
+		else
+		{
+			return "null";
+		}
+	}
+
+}
+
+/**
+ * Register RuleResearch in script parser.
+ * @param parser Script parser.
+ */
+void RuleResearch::ScriptRegister(ScriptParserBase* parser)
+{
+	Bind<RuleResearch> ar = { parser };
+
+	ar.add<&RuleResearch::getCost>("getCost");
+	ar.add<&RuleResearch::getPoints>("getPoints");
+
+	ar.addScriptValue<BindBase::OnlyGet, &RuleResearch::_scriptValues>();
+	ar.addDebugDisplay<&debugDisplayScript>();
 }
 
 }
