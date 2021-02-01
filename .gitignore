@@ -80,6 +80,7 @@ bin/user
 /makefile
 /.kdev4/
 /*.kdev4
+<<<<<<< HEAD
 src/OpenXcom.2010.vcxproj
 *.filters
 bin/OpenXcomEx_test.iobj
@@ -93,3 +94,5 @@ bin/TFTD/README.txt
 bin/UFO/README.txt
 src/OpenXcom.2010.vcxproj
 src/OpenXcom.2010.vcxproj.filters
+=======
+>>>>>>> parent of b09453d0c... Update .gitignore
