@@ -80,3 +80,12 @@ bin/user
 /makefile
 /.kdev4/
 /*.kdev4
+src/OpenXcom.2010.vcxproj
+*.filters
+bin/OpenXcomEx_test.iobj
+bin/OpenXcomEx_test.ipdb
+bin/stderr.txt
+bin/TFTD/README.txt
+bin/UFO/README.txt
+src/OpenXcom.2010.vcxproj
+src/OpenXcom.2010.vcxproj.filters
