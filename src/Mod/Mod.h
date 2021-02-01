@@ -374,6 +374,8 @@ public:
 	static int EXTENDED_TERRAIN_MELEE;
 	static int EXTENDED_UNDERWATER_THROW_FACTOR;
 
+	static std::vector<BattleActionType> ACTION_MENU_ITEM_ORDER;
+
 	// reset all the statics in all classes to default values
 	static void resetGlobalStatics();
 

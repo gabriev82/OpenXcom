@@ -153,6 +153,8 @@ int Mod::EXTENDED_MELEE_REACTIONS;
 int Mod::EXTENDED_TERRAIN_MELEE;
 int Mod::EXTENDED_UNDERWATER_THROW_FACTOR;
 
+std::vector<BattleActionType> Mod::ACTION_MENU_ITEM_ORDER;
+
 constexpr size_t MaxDifficultyLevels = 5;
 
 /// Predefined name for first loaded mod that have all original data
@@ -237,6 +239,18 @@ void Mod::resetGlobalStatics()
 	EXTENDED_MELEE_REACTIONS = 0;
 	EXTENDED_TERRAIN_MELEE = 0;
 	EXTENDED_UNDERWATER_THROW_FACTOR = 0;
+
+	ACTION_MENU_ITEM_ORDER = { BA_THROW,
+							   BA_PRIME,
+							   BA_UNPRIME,
+							   BA_AUTOSHOT,
+							   BA_SNAPSHOT,
+							   BA_AIMEDSHOT,
+							   BA_LAUNCH,
+							   BA_HIT,
+							   BA_MINDCONTROL,
+							   BA_PANIC,
+							   BA_USE };
 }
 
 /**
@@ -2046,6 +2060,32 @@ void Mod::loadConstants(const YAML::Node &node)
 	EXTENDED_MELEE_REACTIONS = node["extendedMeleeReactions"].as<int>(EXTENDED_MELEE_REACTIONS);
 	EXTENDED_TERRAIN_MELEE = node["extendedTerrainMelee"].as<int>(EXTENDED_TERRAIN_MELEE);
 	EXTENDED_UNDERWATER_THROW_FACTOR = node["extendedUnderwaterThrowFactor"].as<int>(EXTENDED_UNDERWATER_THROW_FACTOR);
+	
+	std::vector<std::string> tmpActionMenuItemOrder;
+	tmpActionMenuItemOrder = node["actionMenuItemOrder"].as<std::vector<std::string> >(tmpActionMenuItemOrder);
+
+	if (tmpActionMenuItemOrder.size() > 0) {
+		ACTION_MENU_ITEM_ORDER.clear();
+
+		std::map<std::string, BattleActionType> m;
+		m["BA_THROW"] = BA_THROW;
+		m["BA_PRIME"] = BA_PRIME;
+		m["BA_UNPRIME"] = BA_UNPRIME;
+		m["BA_HIT"] = BA_HIT;
+		m["BA_AUTOSHOT"] = BA_AUTOSHOT;
+		m["BA_SNAPSHOT"] = BA_SNAPSHOT;
+		m["BA_AIMEDSHOT"] = BA_AIMEDSHOT;
+		m["BA_LAUNCH"] = BA_LAUNCH;
+		m["BA_MINDCONTROL"] = BA_MINDCONTROL;
+		m["BA_PANIC"] = BA_PANIC;
+		m["BA_USE"] = BA_USE;
+
+		for (int i = 0; i < tmpActionMenuItemOrder.size(); i++) {
+			ACTION_MENU_ITEM_ORDER.push_back(m[tmpActionMenuItemOrder[i]]);
+		}
+	}
+
+
 }
 
 /**

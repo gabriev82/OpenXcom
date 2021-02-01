@@ -59,6 +59,15 @@ ActionMenuState::ActionMenuState(BattleAction *action) : _action(action)
  */
 ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(action)
 {
+	struct menuItemValues
+	{
+		BattleActionType ba;
+		std::string name;
+		SDLKey key;
+	};
+
+	std::vector<menuItemValues> actionMenuList;
+
 	_screen = false;
 
 	// Set palette
@@ -79,11 +88,12 @@ ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(a
 	// throwing (if not a fixed weapon)
 	if (!weapon->isFixed() && weapon->getCostThrow().Time > 0)
 	{
-		addItem(BA_THROW, "STR_THROW", &id, Options::keyBattleActionItem5);
+		actionMenuList.push_back(menuItemValues{ BA_THROW, "STR_THROW", Options::keyBattleActionItem5 });
 	}
 
 	if (weapon->isPsiRequired() && _action->actor->getBaseStats()->psiSkill <= 0)
 	{
+		addItem(actionMenuList[0].ba, actionMenuList[0].name, &id, actionMenuList[0].key);
 		return;
 	}
 
@@ -91,6 +101,7 @@ ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(a
 	{
 		if (!_game->getMod()->isManaFeatureEnabled() || !_game->getSavedGame()->isManaUnlocked(_game->getMod()))
 		{
+			addItem(actionMenuList[0].ba, actionMenuList[0].name, &id, actionMenuList[0].key);
 			return;
 		}
 	}
@@ -103,14 +114,14 @@ ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(a
 		{
 			if (weapon->getCostPrime().Time > 0)
 			{
-				addItem(BA_PRIME, weapon->getPrimeActionName(), &id, normalWeapon ? SDLK_UNKNOWN : Options::keyBattleActionItem1);
+				actionMenuList.push_back(menuItemValues{ BA_PRIME, weapon->getPrimeActionName(), normalWeapon ? SDLK_UNKNOWN : Options::keyBattleActionItem1 });
 			}
 		}
 		else
 		{
 			if (weapon->getCostUnprime().Time > 0 && !weapon->getUnprimeActionName().empty())
 			{
-				addItem(BA_UNPRIME, weapon->getUnprimeActionName(), &id, normalWeapon ? SDLK_UNKNOWN : Options::keyBattleActionItem2);
+				actionMenuList.push_back(menuItemValues{ BA_UNPRIME, weapon->getUnprimeActionName(), normalWeapon ? SDLK_UNKNOWN : Options::keyBattleActionItem2 });
 			}
 		}
 	}
@@ -124,21 +135,21 @@ ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(a
 
 		if ((!isLauncher || slotLauncher != slotAuto) && weapon->getCostAuto().Time > 0)
 		{
-			addItem(BA_AUTOSHOT, weapon->getConfigAuto()->name, &id, Options::keyBattleActionItem3);
+			actionMenuList.push_back(menuItemValues{ BA_AUTOSHOT, weapon->getConfigAuto()->name, Options::keyBattleActionItem3 });
 		}
 
 		if ((!isLauncher || slotLauncher != slotSnap) && weapon->getCostSnap().Time > 0)
 		{
-			addItem(BA_SNAPSHOT,  weapon->getConfigSnap()->name, &id, Options::keyBattleActionItem2);
+			actionMenuList.push_back(menuItemValues{ BA_SNAPSHOT,  weapon->getConfigSnap()->name, Options::keyBattleActionItem2 });
 		}
 
 		if (isLauncher)
 		{
-			addItem(BA_LAUNCH, "STR_LAUNCH_MISSILE", &id, Options::keyBattleActionItem1);
+			actionMenuList.push_back(menuItemValues{ BA_LAUNCH, "STR_LAUNCH_MISSILE", Options::keyBattleActionItem1 });
 		}
 		else if (weapon->getCostAimed().Time > 0)
 		{
-			addItem(BA_AIMEDSHOT,  weapon->getConfigAimed()->name, &id, Options::keyBattleActionItem1);
+			actionMenuList.push_back(menuItemValues{ BA_AIMEDSHOT,  weapon->getConfigAimed()->name, Options::keyBattleActionItem1 });
 		}
 	}
 
@@ -153,41 +164,51 @@ ActionMenuState::ActionMenuState(BattleAction *action, int x, int y) : _action(a
 				name = "STR_STUN";
 			}
 			else
-			// melee weapon
+				// melee weapon
 			{
 				name = "STR_HIT_MELEE";
 			}
 		}
-		addItem(BA_HIT, name, &id, Options::keyBattleActionItem4);
+		actionMenuList.push_back(menuItemValues{ BA_HIT, name, Options::keyBattleActionItem4 });
 	}
 
 	// special items
 	if (weapon->getBattleType() == BT_MEDIKIT)
 	{
-		addItem(BA_USE, weapon->getMedikitActionName(), &id, Options::keyBattleActionItem1);
+		actionMenuList.push_back(menuItemValues{ BA_USE, weapon->getMedikitActionName(), Options::keyBattleActionItem1 });
 	}
 	else if (weapon->getBattleType() == BT_SCANNER)
 	{
-		addItem(BA_USE, weapon->getPsiAttackName().empty() ? "STR_USE_SCANNER" : weapon->getPsiAttackName(), &id, Options::keyBattleActionItem1);
+		actionMenuList.push_back(menuItemValues{ BA_USE, weapon->getPsiAttackName().empty() ? "STR_USE_SCANNER" : weapon->getPsiAttackName(), Options::keyBattleActionItem1 });
 	}
 	else if (weapon->getBattleType() == BT_PSIAMP)
 	{
 		if (weapon->getCostMind().Time > 0)
 		{
-			addItem(BA_MINDCONTROL, "STR_MIND_CONTROL", &id, Options::keyBattleActionItem3);
+			actionMenuList.push_back(menuItemValues{ BA_MINDCONTROL, "STR_MIND_CONTROL", Options::keyBattleActionItem3 });
 		}
 		if (weapon->getCostPanic().Time > 0)
 		{
-			addItem(BA_PANIC, "STR_PANIC_UNIT", &id, Options::keyBattleActionItem2);
+			actionMenuList.push_back(menuItemValues{ BA_PANIC, "STR_PANIC_UNIT", Options::keyBattleActionItem2 });
 		}
 		if (weapon->getCostUse().Time > 0)
 		{
-			addItem(BA_USE, weapon->getPsiAttackName(), &id, Options::keyBattleActionItem1);
+			actionMenuList.push_back(menuItemValues{ BA_USE, weapon->getPsiAttackName(), Options::keyBattleActionItem1 });
 		}
 	}
 	else if (weapon->getBattleType() == BT_MINDPROBE)
 	{
-		addItem(BA_USE, weapon->getPsiAttackName().empty() ? "STR_USE_MIND_PROBE" : weapon->getPsiAttackName(), &id, Options::keyBattleActionItem1);
+		actionMenuList.push_back(menuItemValues{ BA_USE, weapon->getPsiAttackName().empty() ? "STR_USE_MIND_PROBE" : weapon->getPsiAttackName(), Options::keyBattleActionItem1 });
+	}
+
+
+	for (BattleActionType sortedBa : Mod::ACTION_MENU_ITEM_ORDER) {
+		for (int i = 0; i < actionMenuList.size(); i++)
+		{
+			if (actionMenuList[i].ba == sortedBa) {
+				addItem(actionMenuList[i].ba, actionMenuList[i].name, &id, actionMenuList[i].key);
+			}
+		}
 	}
 
 }
